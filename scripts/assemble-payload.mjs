@@ -133,8 +133,9 @@ function npmInstall(target, tarball) {
   } else {
     log(`安装 @deepseek-ai/dsh@${DSH_VERSION} (${target}) …`);
   }
-  const r = spawnSync("npm", args, { cwd: APP, stdio: "inherit" });
-  if (r.status !== 0) throw new Error("npm install 失败");
+  // Windows 上 npm 是 npm.cmd（批处理），spawnSync 必须 shell 执行；且出错时打印输出便于排查
+  const r = spawnSync("npm", args, { cwd: APP, stdio: "inherit", shell: process.platform === "win32" });
+  if (r.status !== 0) throw new Error("npm install 失败 (exit=" + r.status + ")");
   // 确认实际安装版本
   const installed = JSON.parse(readFileSync(join(APP, "node_modules/@deepseek-ai/dsh/package.json"), "utf8"));
   return installed.version;
