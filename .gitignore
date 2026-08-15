@@ -1,0 +1,13 @@
+# payload 是组装产物（M3 可重复构建），不入库
+/payload/
+/.npm-cache/
+/dist/
+node_modules/
+*.log
+
+# macOS
+.DS_Store
+
+# Tauri / Rust
+shell/src-tauri/target/
+shell/src-tauri/gen/

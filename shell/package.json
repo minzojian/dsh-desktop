@@ -1,0 +1,14 @@
+{
+  "name": "dsh-desktop-shell",
+  "private": true,
+  "version": "0.1.0",
+  "description": "DSH 桌面壳（Tauri v2，纯窗 + 进程管家）",
+  "scripts": {
+    "tauri": "tauri",
+    "dev": "tauri dev",
+    "build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

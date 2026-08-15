@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DSH Desktop</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="page">
+    <div class="card" id="view-starting">
+      <div class="logo">DSH</div>
+      <h1>正在启动 dsh…</h1>
+      <p class="sub" id="starting-note">正在加载内置运行时</p>
+      <div class="spinner"></div>
+      <button id="btn-browser-starting" class="ghost">在系统浏览器打开</button>
+    </div>
+
+    <div class="card hidden" id="view-error">
+      <div class="logo error">!</div>
+      <h1>dsh 启动失败</h1>
+      <pre class="msg" id="error-message"></pre>
+      <div class="row">
+        <button id="btn-logs" class="primary">查看日志</button>
+        <button id="btn-retry" class="secondary">重试</button>
+      </div>
+    </div>
+  </main>
+  <script src="main.js"></script>
+</body>
+</html>
