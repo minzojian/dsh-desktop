@@ -3,6 +3,7 @@ name = "dsh-desktop"
 version = "0.1.0"
 description = "DSH 桌面版（Tauri v2 壳）"
 edition = "2021"
+license = "MIT"
 
 [lib]
 name = "dsh_desktop_lib"

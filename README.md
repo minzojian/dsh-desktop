@@ -84,6 +84,11 @@ CI 见 [.github/workflows/build.yml](.github/workflows/build.yml)（macOS arm64 
 | M4 | 壳 + payload 合并构建 | ✔ .app.zip 117MB + .dmg 200MB（dist/） |
 | M5 | 分发加固（签名/公证、文档） | 文档就绪；签名公证待确认（见 §8 / docs/决策记录.md） |
 
+## License
+
+壳代码（Rust / UI / 构建脚本）：**MIT**，见 [LICENSE](LICENSE)。
+再分发的第三方组件（@deepseek-ai/dsh、Node.js、sharp、node-pty 等）许可声明见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
 ## 待确认事项（DESIGN.md §8）
 
 1. 版本锁定：当前 `0.1.0-rc.6`，是否接受 rc 版本号

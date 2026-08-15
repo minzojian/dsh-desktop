@@ -192,7 +192,7 @@ function slim() {
         if (e.name === "@types" || e.name === "docs") { rmSync(p, { recursive: true, force: true }); removed++; continue; }
         if (e.name === ".bin") continue;
         walk(p);
-      } else if (e.name.endsWith(".map") || e.name.endsWith(".md") || e.name.endsWith(".markdown")) {
+      } else if (e.name.endsWith(".map") || ((e.name.endsWith(".md") || e.name.endsWith(".markdown")) && !/^(LICENSE|COPYING|NOTICE|AUTHORS|PATENTS)/i.test(e.name))) {
         const sz = existsSync(p) ? 0 : 0;
         try { freed += readFileSync(p).length; } catch {}
         rmSync(p, { force: true }); removed++;

@@ -1,6 +1,7 @@
 {
   "name": "dsh-desktop-shell",
   "private": true,
+  "license": "MIT",
   "version": "0.1.0",
   "description": "DSH 桌面壳（Tauri v2，纯窗 + 进程管家）",
   "scripts": {

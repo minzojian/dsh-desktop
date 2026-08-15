@@ -2,6 +2,7 @@
   "name": "dsh-desktop",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "DSH 桌面版（无 Electron · Tauri v2 壳 + 内置 dsh 运行时）",
   "scripts": {
     "payload:assemble": "node scripts/assemble-payload.mjs",
