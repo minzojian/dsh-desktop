@@ -64,8 +64,14 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          # junction 的 Target 必须是绝对路径（PowerShell 限制）
           Remove-Item shell/src-tauri/payload -Force -Recurse -ErrorAction SilentlyContinue
-          New-Item -ItemType Junction -Path shell/src-tauri/payload -Target ..\..\payload | Out-Null
+          $target = Join-Path $env:GITHUB_WORKSPACE "payload"
+          New-Item -ItemType Junction -Path shell/src-tauri/payload -Target $target | Out-Null
+          # 校验
+          if (-not (Test-Path shell/src-tauri/payload/app/node_modules/@deepseek-ai/dsh/lib/bin.js)) {
+            throw "junction 校验失败: bin.js 不可达"
+          }
 
       # M2+M4: 合并构建（release .app / .msi / .exe）
       - name: Tauri build
