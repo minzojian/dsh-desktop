@@ -125,7 +125,7 @@ function npmInstall(target, tarball) {
   );
   const t = TARGETS[target];
   const args = ["install", "--omit=dev", "--no-audit", "--no-fund", "--loglevel=error",
-    `--os=${t.os}`, `--cpu=${t.cpu}`, `--registry=${REGISTRY}`];
+    `--os=${t.os}`, `--cpu=${t.cpu}`, `--registry=${REGISTRY}`, `--cache=${join(ROOT, ".npm-cache")}`];
   if (tarball) {
     log(`策略 B：优先安装本地 tarball ${tarball}`);
     args.push(tarball);

@@ -27,6 +27,9 @@ jobs:
               shell/src-tauri/target/release/bundle/msi/*.msi
               shell/src-tauri/target/release/bundle/nsis/*.exe
     runs-on: ${{ matrix.os }}
+    env:
+      # npm 缓存统一放 runner 临时目录（覆盖任何 npmrc 里的路径）
+      npm_config_cache: ${{ runner.temp }}/npm-cache
 
     steps:
       - uses: actions/checkout@v4
