@@ -11,7 +11,7 @@
  *
  * 环境变量: DSH_NPM_REGISTRY（默认 https://registry.npmmirror.com）
  */
-import { createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { pipeline } from "node:stream/promises";
 import { spawnSync } from "node:child_process";
 import { join, dirname } from "node:path";
@@ -89,14 +89,15 @@ function extractNode(dest, target) {
     const r = spawnSync("tar", ["-xzf", dest, "-C", NODE_DIR, "--strip-components=1"], { stdio: "inherit" });
     if (r.status !== 0) throw new Error("tar 解压失败");
   } else {
-    const r = spawnSync("unzip", ["-q", dest, "-d", NODE_DIR], { stdio: "inherit" });
-    if (r.status !== 0) throw new Error("unzip 解压失败");
+    // Windows runner 无 unzip/mv，用 PowerShell Expand-Archive + fs.rename
+    const r = spawnSync("powershell", ["-NoProfile", "-Command", `Expand-Archive -Force '${dest}' '${NODE_DIR}'`], { stdio: "inherit" });
+    if (r.status !== 0) throw new Error("Expand-Archive 解压失败");
     // win zip 解出 node-vX-win-x64/ 一层目录
     const sub = readdirSync(NODE_DIR).find((d) => d.startsWith("node-v"));
     if (sub) {
       const inner = join(NODE_DIR, sub);
       for (const f of readdirSync(inner)) {
-        spawnSync("mv", [join(inner, f), join(NODE_DIR, f)]);
+        renameSync(join(inner, f), join(NODE_DIR, f));
       }
       rmSync(inner, { recursive: true, force: true });
     }

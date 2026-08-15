@@ -4,6 +4,7 @@ name: build
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
 
 jobs:
@@ -12,14 +13,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # macos-latest = arm64 runner
+          # macos-latest = arm64 runner（M2/M4 已验证平台）
           - os: macos-latest
             target: darwin-arm64
-            artifact: dmg
-          # Windows x64（后续跟进，见 DESIGN.md §7 M4）
+            upload: |
+              shell/src-tauri/target/release/bundle/macos/*.app
+              dist/*.zip
+              dist/*.dmg
+          # Windows x64（DESIGN.md §7 M4：macOS 先行，Windows 跟进）
           - os: windows-latest
             target: win32-x64
-            artifact: msi
+            upload: |
+              shell/src-tauri/target/release/bundle/msi/*.msi
+              shell/src-tauri/target/release/bundle/nsis/*.exe
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -33,7 +39,6 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # macOS: Tauri 依赖 Xcode CLT（runner 自带）；Windows: MSVC（runner 自带）
       - name: Cache cargo
         uses: actions/cache@v4
         with:
@@ -50,19 +55,35 @@ jobs:
       - name: Assemble payload
         run: node scripts/assemble-payload.mjs --target ${{ matrix.target }}
 
-      # M2+M4: 合并构建
+      # 资源 glob 不支持 ../（glob crate 限制），用符号链接/目录联接指向 payload
+      - name: Link payload into src-tauri (macOS)
+        if: runner.os == 'macOS'
+        run: ln -sfn ../../payload shell/src-tauri/payload
+
+      - name: Link payload into src-tauri (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Remove-Item shell/src-tauri/payload -Force -Recurse -ErrorAction SilentlyContinue
+          New-Item -ItemType Junction -Path shell/src-tauri/payload -Target ..\..\payload | Out-Null
+
+      # M2+M4: 合并构建（release .app / .msi / .exe）
       - name: Tauri build
         working-directory: shell
-        env:
-          DSH_DESKTOP_NODE: ${{ github.workspace }}/payload/node/bin/node$(if('${{ runner.os }}' -eq 'Windows'){'.exe'})
         run: npx tauri build
+
+      # macOS 附加产物：.app.zip + .dmg（hdiutil 无头方案，规避 create-dmg/Finder 自动化）
+      - name: Package macOS artifacts
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p dist
+          cd shell/src-tauri/target/release/bundle/macos
+          zip -rqy "$GITHUB_WORKSPACE/dist/DSH-Desktop_${{ github.ref_name }}_aarch64.app.zip" "DSH Desktop.app"
+          bash "$GITHUB_WORKSPACE/scripts/make-dmg.sh" ${{ github.ref_name }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: dsh-desktop-${{ matrix.target }}
-          path: |
-            shell/src-tauri/target/release/bundle/dmg/*.dmg
-            shell/src-tauri/target/release/bundle/msi/*.msi
-            shell/src-tauri/target/release/bundle/nsis/*.exe
+          name: dsh-desktop-${{ matrix.target }}-${{ github.ref_name }}
+          path: ${{ matrix.upload }}
           if-no-files-found: warn
