@@ -5,8 +5,8 @@ permissions:
   contents: write
 
 on:
+  # 只构建 tag（如 v0.1.0），main 分支推送不再触发构建（发布驱动模式）
   push:
-    branches: [main]
     tags: ["v*"]
   workflow_dispatch:
 
@@ -49,6 +49,14 @@ jobs:
             ~/.cargo/registry
             shell/src-tauri/target
           key: ${{ runner.os }}-cargo-${{ hashFiles('shell/src-tauri/Cargo.lock') }}
+
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: .npm-cache
+          key: ${{ runner.os }}-npm-v1
+          restore-keys: |
+            ${{ runner.os }}-npm-v1
 
       - name: Install shell deps
         working-directory: shell
@@ -105,6 +113,12 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
+      # 重跑同一 tag 时先删旧 release，避免半成品资产残留
+      - name: Cleanup previous release
+        run: gh release delete ${{ github.ref_name }} --yes 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
