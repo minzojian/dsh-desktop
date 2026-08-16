@@ -20,7 +20,7 @@ jobs:
           - os: macos-latest
             target: darwin-arm64
             upload: |
-              shell/src-tauri/target/release/bundle/macos/*.app
+              # 注意：不含裸 .app（目录含数千文件，无法作 Release 资产），dmg/zip 已足够
               dist/*.zip
               dist/*.dmg
           # Windows x64（DESIGN.md §7 M4：macOS 先行，Windows 跟进）
@@ -108,7 +108,11 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
+          files: |
+            artifacts/**/*.dmg
+            artifacts/**/*.zip
+            artifacts/**/*.msi
+            artifacts/**/*.exe
           generate_release_notes: true
           draft: false
           prerelease: false
