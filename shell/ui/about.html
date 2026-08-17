@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>关于 DSH Desktop</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="about-body">
+  <button id="btn-close" class="about-close" title="关闭">✕</button>
+  <div class="about-dragbar"></div>
+  <main class="about">
+    <img src="logo.png" alt="DSH" class="about-logo" />
+    <h1>DSH Desktop</h1>
+    <p class="about-sub">DeepSeek Harness 桌面版 · 无 Electron</p>
+
+    <div class="ver-block">
+      <div class="ver-row">
+        <span>外壳版本</span>
+        <b id="v-shell">…</b>
+        <a href="#" id="gh-shell" class="gh-link" title="打开外壳仓库">GitHub ↗</a>
+      </div>
+      <div class="ver-row">
+        <span>底座版本</span>
+        <b id="v-dsh">…</b>
+        <a href="#" id="gh-dsh" class="gh-link" title="打开 dsh 仓库">GitHub ↗</a>
+      </div>
+      <div class="ver-row">
+        <span>Node 运行时</span>
+        <b id="v-node">…</b>
+      </div>
+      <div class="ver-row">
+        <span>平台</span>
+        <b id="v-platform">…</b>
+      </div>
+    </div>
+
+    <div class="update-block">
+      <div class="update-line">
+        <span>底座最新版</span>
+        <b id="v-latest">—</b>
+        <button id="btn-check" class="ghost small">检查更新</button>
+      </div>
+      <div id="update-status" class="update-status">正在检查…</div>
+      <button id="btn-update" class="primary" disabled>立即更新</button>
+    </div>
+
+    <p class="about-foot">© 2026 Kent Wood · MIT License</p>
+  </main>
+  <script src="about.js"></script>
+</body>
+</html>
