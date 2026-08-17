@@ -650,8 +650,11 @@ fn check_update_on_startup(app: AppHandle) {
 fn copy_dir(src: &Path, dst: &Path) -> std::io::Result<()> {
     #[cfg(windows)]
     {
+        // robocopy 参数逐个传入（避免 &OsStr 与 &str 混用类型不匹配）
         Command::new("robocopy")
-            .args([src.as_os_str(), dst.as_os_str(), "/E", "/NFL", "/NDL", "/NJH", "/NJS"])
+            .arg(src)
+            .arg(dst)
+            .args(["/E", "/NFL", "/NDL", "/NJH", "/NJS"])
             .status()?;
         Ok(())
     }
